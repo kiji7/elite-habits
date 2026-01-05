@@ -841,6 +841,27 @@
     </style>
 </head>
 <body>
+    <!-- AUTH SCREEN -->
+<div id="authScreen" style="display:flex;align-items:center;justify-content:center;height:100vh;background:#111;">
+  <div style="background:#1a1a1a;padding:30px;border-radius:12px;width:320px;">
+    <h2 style="color:#d4af37;text-align:center;">Elite Habits</h2>
+
+    <input id="authEmail" type="email" placeholder="Email"
+      style="width:100%;padding:10px;margin-top:15px">
+
+    <input id="authPassword" type="password" placeholder="Password"
+      style="width:100%;padding:10px;margin-top:10px">
+
+    <button onclick="register()" style="width:100%;margin-top:15px">
+      Register
+    </button>
+
+    <button onclick="login()" style="width:100%;margin-top:10px">
+      Login
+    </button>
+  </div>
+</div>
+    
     <!-- Homepage -->
     <div id="homepage" class="homepage">
         <div class="hero-content">
@@ -1678,7 +1699,67 @@
                 closeProfileModal();
             }
         });
+
+        function register() {
+  const email = document.getElementById("authEmail").value;
+  const password = document.getElementById("authPassword").value;
+
+  firebaseHelpers
+    .createUserWithEmailAndPassword(firebaseAuth, email, password)
+    .catch(err => alert(err.message));
+}
+
+function login() {
+  const email = document.getElementById("authEmail").value;
+  const password = document.getElementById("authPassword").value;
+
+  firebaseHelpers
+    .signInWithEmailAndPassword(firebaseAuth, email, password)
+    .catch(err => alert(err.message));
+}
+
+window.addEventListener("load", () => {
+  firebaseHelpers.onAuthStateChanged(firebaseAuth, user => {
+    if (user) {
+      document.getElementById("authScreen").style.display = "none";
+      enterApp();
+    } else {
+      document.getElementById("authScreen").style.display = "flex";
+    }
+  });
+});
+
+
     </script>
+
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyDnERqMVrEy8siiT00Mjdla8XZflpDuVDw",
+  authDomain: "elite-habits-78276.firebaseapp.com",
+  projectId: "elite-habits-78276",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.firebaseAuth = auth;
+  window.firebaseHelpers = {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  };
+</script>
 </body>
 
 </html>
+
